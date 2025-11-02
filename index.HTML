@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thobeka — A Sweet Invitation</title>
+  <style>
+    :root{
+      --bg:#1a0f2f; --card:#22113d; --accent:#ff85a2; --accent2:#ffb6c1; --glass: rgba(255,255,255,0.08);
+      --soft:#fce4ec; --muted:#f8bbd0;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#2a0845 0%, #6441A5 50%, #1a0f2f 100%);color:var(--soft);overflow-x:hidden;}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;position:relative;overflow:hidden;}
+    .card{width:980px;max-width:96vw;background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));border-radius:22px;padding:28px;box-shadow:0 10px 40px rgba(0,0,0,0.5);display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:center;animation:fadeIn 1.4s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+    .left{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,133,162,0.1), rgba(255,182,193,0.05));border:1px solid rgba(255,255,255,0.05);}
+    .title{font-size:22px;letter-spacing:0.6px;margin:0 0 8px;color:var(--accent2);animation:glow 2s infinite alternate;}
+    @keyframes glow{from{text-shadow:0 0 5px var(--accent);}to{text-shadow:0 0 20px var(--accent2);}}
+    h1{margin:0;font-size:30px;line-height:1.1;}
+    p.lead{margin:12px 0 18px;color:var(--muted)}
+    .photo{width:100%;height:240px;border-radius:12px;background:url('thobeka.jpg') center/cover no-repeat;box-shadow:0 4px 18px rgba(0,0,0,0.4);}
+    .quote{font-style:italic;color:var(--soft);margin-top:12px;font-size:14px;}
+    .btn{display:inline-block;padding:10px 16px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ff9f9f);color:#1a0f2f;font-weight:700;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(255,133,162,0.2);transition:transform .2s ease, box-shadow .2s ease;}
+    .btn:hover{transform:scale(1.05);box-shadow:0 8px 22px rgba(255,133,162,0.3);}
+    .btn:active{transform:translateY(1px)}
+    .right{padding:18px}
+    .typewriter{font-size:18px;margin-bottom:12px;min-height:30px;animation:fadeIn 1.5s ease;}
+    .options{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .option{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.05);cursor:pointer;border:1px solid rgba(255,255,255,0.05);transition:all .3s ease;}
+    .option:hover{background:rgba(255,255,255,0.1);transform:scale(1.05);}
+    .option.selected{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#1a0f2f;font-weight:700;}
+    .result{margin-top:14px;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));font-size:14px;}
+    .confetti-canvas{position:absolute;pointer-events:none;inset:0;}
+    footer{font-size:12px;color:var(--muted);margin-top:12px;text-align:center;}
+    @media(max-width:880px){.card{grid-template-columns:1fr;}.photo{height:200px;}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="left">
+        <div class="title">A Little Surprise — For <span id="girlName">Thobeka</span></div>
+        <h1 id="headline">Hi Thobeka Msibi, may I invite you somewhere special?</h1>
+        <p class="lead">I created this page just for you — gentle colors, smooth animations, and a few ideas that might make you smile.</p>
+        <div class="photo"></div>
+        <div class="quote">“The most romantic moments are made from genuine effort and simple ideas.”</div>
+        <div style="margin-top:12px"><button class="btn" id="surpriseBtn">Reveal Date Ideas 💕</button></div>
+      </div>
+
+      <div class="right">
+        <div class="typewriter" id="typewriter">_</div>
+        <div class="info">
+          <div class="small">Pick the vibe you’d love most:</div>
+          <div class="options" id="modes">
+            <div class="option" data-mode="coffee">☕ Chill coffee & chat at Menlyn</div>
+            <div class="option" data-mode="sunset">🌇 Rooftop & sunset at Skyline Rooftop Restaurant</div>
+            <div class="option" data-mode="walk">🍦 Park walk + ice cream at National Botanical Gardens</div>
+            <div class="option" data-mode="gallery">🎨 Art gallery + wine at Pretoria Arts Association or Kievitz Kroon</div>
+          </div>
+        </div>
+        <textarea id="customNote" rows="3" placeholder="Add your personal message to Mpho..."></textarea>
+        <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+          <button class="btn" id="sendBtn">Create Invite</button>
+          <button class="btn" id="playMusic" style="background:linear-gradient(90deg,#ffb6c1,#ff85a2);">Play Love Song 🎵</button>
+        </div>
+        <div class="result" id="resultArea" style="display:none"></div>
+        <footer>Made with ❤️, smooth animations, and courage to ask Thobeka out beautifully.</footer>
+      </div>
+      <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+    </div>
+  </div>
+  <audio id="song" src="Sheeran.mp3" preload="none"></audio>
+  <script>
+    const name='Thobeka';
+    const phrases=[`You have an incredible vibe — I thought maybe we could make a little memory together?`,`No rush, no pressure. Just a moment, some laughter, and maybe coffee or a sunset?`,`Pick one that feels right; I’ll make it special.`];
+    const tw=document.getElementById('typewriter');let pi=0;
+    function showType(){const s=phrases[pi%phrases.length];let i=0;tw.textContent='';const t=setInterval(()=>{tw.textContent+=s[i++]||'';if(i>s.length)clearInterval(t);},30);pi++;setTimeout(showType,5000);}showType();
+
+    document.querySelectorAll('.option').forEach(o=>o.addEventListener('click',()=>{document.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');}));
+
+    document.getElementById('playMusic').addEventListener('click',()=>{const audio=document.getElementById('song');audio.volume=0.6;if(audio.paused)audio.play();else audio.pause();});
+
+    const ideas={coffee:[{title:'Chill coffee & chat at Menlyn',note:'A cozy 45-minute coffee with smiles.'}],sunset:[{title:'Rooftop & sunset at Skyline Rooftop',note:'Golden light, gentle talks, and city views.'}],walk:[{title:'Park walk + ice cream at National Botanical Gardens',note:'Simple joy, nature breeze, and sweetness.'}],gallery:[{title:'Art gallery + wine at Pretoria Arts or Kievitz Kroon',note:'Colors, art, and a sip of good wine.'}]};
+
+    document.getElementById('surpriseBtn').addEventListener('click',()=>{const sel=document.querySelector('.option.selected')?.dataset.mode||'coffee';const choice=ideas[sel][0];showResult(choice);burstConfetti();});
+    document.getElementById('sendBtn').addEventListener('click', () => {
+    const sel = document.querySelector('.option.selected')?.dataset.mode || 'coffee';
+    const choice = ideas[sel][0];
+    const note = document.getElementById('customNote').value.trim();
+
+    const msg = `Hi Thobeka, would you like to join me for ${choice.title}? ${choice.note}${note ? '\n\nMessage: ' + note : ''}`;
+
+    // Show invite on the page
+    const area = document.getElementById('resultArea');
+    area.style.display = 'block';
+    area.innerHTML = `<strong>Your invite:</strong><pre style="white-space:pre-wrap;margin-top:8px">${msg}</pre>`;
+
+    // Encode the message for WhatsApp
+    const encodedMsg = encodeURIComponent(msg);
+    const whatsappNumber = '+27648917189'; // your SA number
+    const waLink = `https://wa.me/${whatsappNumber}?text=${encodedMsg}`;
+
+    // Open WhatsApp in new tab
+    window.open(waLink, '_blank');
+
+    burstConfetti();
+});
+
+
+    function showResult(choice,note=''){const area=document.getElementById('resultArea');area.style.display='block';const msg=`Hi ${name}, would you like to join me for ${choice.title}? ${choice.note}${note?'\n\nMessage: '+note:''}`;area.innerHTML=`<strong>Your invite:</strong><pre style="white-space:pre-wrap;margin-top:8px">${msg}</pre>`;}
+
+    const confettiCanvas=document.getElementById('confettiCanvas');const ctx=confettiCanvas.getContext('2d');function resizeCanvas(){confettiCanvas.width=window.innerWidth;confettiCanvas.height=window.innerHeight;}window.addEventListener('resize',resizeCanvas);resizeCanvas();function burstConfetti(){const conf=[];for(let i=0;i<80;i++){conf.push({x:Math.random()*confettiCanvas.width,y:-10,r:Math.random()*6+4,vx:(Math.random()-0.5)*4,vy:Math.random()*3+2,color:['#ff85a2','#ffb6c1','#fff0f5','#ffe4e1'][Math.floor(Math.random()*4)]});}let t=0;const anim=setInterval(()=>{ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);t++;conf.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.1;ctx.beginPath();ctx.fillStyle=p.color;ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});if(t>150){clearInterval(anim);ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);}},16);}
+  </script>
+</body>
+</html>
